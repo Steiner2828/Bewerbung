@@ -19,6 +19,7 @@
   if (F && F.downloads && B.downloads) {
     B.downloads.dateien = F.downloads.map((d) => ({ ...d, roh: true }));
   }
+  if (F && F.downloadText && B.downloads) B.downloads.text = F.downloadText;
   if (F && F.fragen) {
     B.chat.vorschlaege = B.chat.vorschlaege.map((f) => F.fragen[f] || f);
   }
