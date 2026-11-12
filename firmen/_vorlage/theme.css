@@ -1,0 +1,10 @@
+/* CI der Firma – nur die Werte anpassen, die abweichen sollen. */
+:root {
+  --farbe-primaer: #ff7a59;   /* Hauptfarbe: Senden-Button, Linie, aktive Navigation */
+  --farbe-primaer-text: #e2552f; /* Hauptfarbe für Text (etwas dunkler) */
+  --farbe-akzent: #33363b;    /* Akzent (Marketing-Anteil im Balken, Badges) */
+  /* --farbe-hintergrund: #f6f7f9; */
+  /* --schrift-text: "Roboto", sans-serif; */
+  /* --schrift-titel: "Roboto", sans-serif; */
+  /* --radius: 4px; */
+}

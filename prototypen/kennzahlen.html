@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Kennzahlen – Varianten</title>
+<style>
+  :root {
+    --o: #ff7a59; --o-text: #e2552f; --o-hell: #ffe3da; --dunkel: #33363b;
+    --text: #1c2430; --leise: #6b7480; --linie: #e8ebeb; --bg: #fefefe; --flaeche: #fff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text); background: var(--bg); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 1260px; margin: 0 auto; padding: 32px 20px 60px; }
+  .kopf { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+  h1 { font-size: 1.6rem; letter-spacing: -.02em; margin: 0; }
+  .kopf p { margin: 4px 0 0; color: var(--leise); font-size: .9rem; }
+  .nochmal { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--linie); background: var(--flaeche); font: inherit; font-weight: 600; cursor: pointer; }
+  .nochmal:hover { border-color: var(--o); color: var(--o-text); }
+  .raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+  .variante { border: 1px solid var(--linie); border-radius: 14px; background: var(--flaeche); padding: 20px 22px 24px; }
+  .variante > h2 { margin: 0 0 2px; font-size: 1rem; display: flex; gap: 10px; align-items: center; }
+  .variante > h2 b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--o); color: #fff; font-size: .75rem; }
+  .variante > p { margin: 0 0 18px; color: var(--leise); font-size: .85rem; }
+  .ueber { margin: 0 0 14px; font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; }
+  .zahl { font-variant-numeric: tabular-nums; }
+
+  /* 1 · KPI-Kacheln */
+  .v1 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kachel { border-radius: 12px; padding: 14px 14px 12px; background: #f6f7f7; position: relative; overflow: hidden; }
+  .kachel--breit { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; }
+  .kachel__label { font-size: .78rem; color: var(--leise); font-weight: 600; }
+  .kachel__zahl { display: block; font-size: 1.7rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin: 4px 0 2px; }
+  .kachel__zahl small { font-size: .9rem; font-weight: 700; color: var(--leise); letter-spacing: 0; }
+  .kachel__sub { font-size: .76rem; color: var(--leise); }
+  .kachel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--o); transform: scaleY(0); transform-origin: bottom; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .an .kachel::before { transform: scaleY(1); }
+  .monate { display: flex; gap: 4px; }
+  .monate i { width: 10px; height: 22px; border-radius: 3px; background: #e3e6e6; transition: background .3s; }
+  .an .monate i.voll { background: var(--o); }
+  .an .monate i.halb { background: repeating-linear-gradient(135deg, var(--o) 0 3px, var(--o-hell) 3px 6px); }
+
+  /* 2 · Tachos */
+  .v2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .tacho svg { width: 100%; height: auto; overflow: visible; }
+  .tacho .grund { fill: none; stroke: #eceeee; stroke-width: 10; stroke-linecap: round; }
+  .tacho .wert { fill: none; stroke: var(--o); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 0 100; transition: stroke-dasharray 1s cubic-bezier(.2,.8,.2,1); }
+  .tacho text { font-size: 10.5px; font-weight: 800; fill: var(--text); }
+  .tacho .klein { font-size: 8px; font-weight: 600; fill: var(--leise); }
+  .tacho span { display: block; font-size: .78rem; font-weight: 600; color: var(--leise); margin-top: -4px; }
+
+  /* 3 · Größenvergleich */
+  .v3 svg { width: 100%; height: auto; display: block; }
+  .blase { transform-box: fill-box; transform-origin: 50% 100%; transform: scale(0); transition: transform .8s cubic-bezier(.2,.9,.25,1.15); }
+  .an .blase { transform: scale(1); }
+  .blase--2 { transition-delay: .2s; } .blase--3 { transition-delay: .4s; }
+  .v3 .beschr { font-size: 11px; fill: var(--leise); }
+  .v3 .beschr b, .v3 .gross { font-weight: 800; fill: var(--text); font-size: 13px; }
+  .v3 .linie { stroke: #c9cdcd; stroke-width: 1; stroke-dasharray: 2 3; }
+  .v3 .fade { opacity: 0; transition: opacity .4s .9s; } .an .v3 .fade { opacity: 1; }
+  .uhr { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--linie); }
+  .uhr svg { width: 74px; height: 74px; flex: none; }
+  .uhr path { fill: none; stroke-width: 9; stroke: #e7eaea; transition: stroke .25s; }
+  .uhr strong { display: block; font-size: 1.25rem; letter-spacing: -.02em; }
+  .uhr span { font-size: .8rem; color: var(--leise); }
+
+  /* 4 · Raster */
+  .v4 .zeile { margin-bottom: 14px; }
+  .v4 .zeile__kopf { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .v4 .zeile__kopf span { font-size: .82rem; color: var(--leise); font-weight: 600; }
+  .v4 .zeile__kopf strong { font-size: 1rem; }
+  .felder { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; }
+  .felder--12 { grid-template-columns: repeat(12, 1fr); }
+  .felder i { aspect-ratio: 1; border-radius: 3px; background: #eceeee; transform: scale(.3); opacity: 0; transition: transform .35s cubic-bezier(.3,1.4,.5,1), opacity .25s; transition-delay: calc(var(--k) * 35ms); }
+  .an .felder i { transform: scale(1); opacity: 1; }
+  .felder i.f { background: var(--o); }
+  .felder i.m { background: var(--dunkel); }
+  .felder i.h { background: repeating-linear-gradient(135deg, var(--o) 0 3px, var(--o-hell) 3px 6px); }
+  .legende { display: flex; gap: 14px; flex-wrap: wrap; font-size: .74rem; color: var(--leise); }
+  .legende i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+  /* 5 · Deal-Ticket */
+  .ticket {
+    position: relative; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .82rem;
+    background: #fbfaf7; border: 1px solid #ece9e2; border-bottom: 0; padding: 18px 18px 64px; color: #2b2b2b;
+  }
+  .ticket::after {
+    content: ""; position: absolute; left: -1px; right: -1px; bottom: -10px; height: 10px;
+    background: linear-gradient(-45deg, transparent 7px, #fbfaf7 0) 0 0 / 14px 10px repeat-x, linear-gradient(45deg, transparent 7px, #fbfaf7 0) 0 0 / 14px 10px repeat-x;
+  }
+  .ticket__kopf { text-align: center; letter-spacing: .12em; font-weight: 700; margin-bottom: 4px; }
+  .ticket__sub { text-align: center; color: #8a877f; font-size: .72rem; margin-bottom: 12px; }
+  .ticket hr { border: 0; border-top: 1px dashed #cfcac0; margin: 10px 0; }
+  .posten { display: flex; gap: 6px; align-items: baseline; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+  .an .posten { opacity: 1; transform: none; }
+  .posten:nth-of-type(2) { transition-delay: .35s; } .posten:nth-of-type(3) { transition-delay: .7s; }
+  .posten span { white-space: nowrap; }
+  .posten em { flex: 1; border-bottom: 2px dotted #cfcac0; transform: translateY(-3px); }
+  .posten b { white-space: nowrap; }
+  .summe { display: flex; justify-content: space-between; font-weight: 700; font-size: .9rem; }
+  .stempel {
+    position: absolute; right: 18px; bottom: 16px; padding: 4px 10px; border: 3px solid var(--o); border-radius: 6px;
+    color: var(--o); font-weight: 800; letter-spacing: .1em; font-size: .78rem; transform: rotate(-12deg) scale(2.2); opacity: 0;
+    transition: transform .35s cubic-bezier(.3,1.6,.5,1) 1.3s, opacity .2s 1.3s; mix-blend-mode: multiply;
+  }
+  .an .stempel { transform: rotate(-12deg) scale(1); opacity: .9; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kopf">
+    <div><h1>Ergebnisse – fünf Varianten</h1><p>Beispiel European Media Partner. Alle Varianten sind in Boxbreite gebaut.</p></div>
+    <button class="nochmal" id="nochmal">↻ Animation neu abspielen</button>
+  </div>
+
+  <div class="raster" id="buehne">
+
+    <section class="variante">
+      <h2><b>1</b>KPI-Kacheln</h2>
+      <p>Große Zahlen wie im Dashboard, Sales Cycle als Monatsleiste.</p>
+      <h3 class="ueber">Ergebnisse</h3>
+      <div class="v1">
+        <div class="kachel"><span class="kachel__label">Deal-Size</span><span class="kachel__zahl"><span class="zahl" data-ziel="1">1</span>–<span class="zahl" data-ziel="30">30</span><small> T€</small></span><span class="kachel__sub">1.000 – 30.000 €</span></div>
+        <div class="kachel"><span class="kachel__label">Projektgröße</span><span class="kachel__zahl"><span class="zahl" data-ziel="30">30</span>–<span class="zahl" data-ziel="200">200</span><small> T€</small></span><span class="kachel__sub">30.000 – 200.000 €</span></div>
+        <div class="kachel kachel--breit">
+          <div><span class="kachel__label">Sales Cycle</span><span class="kachel__zahl"><span class="zahl" data-ziel="2">2</span>–<span class="zahl" data-ziel="3">3</span><small> Monate</small></span></div>
+          <div class="monate"><i class="voll"></i><i class="voll"></i><i class="halb"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="variante">
+      <h2><b>2</b>Tachos</h2>
+      <p>Drei Halbkreis-Anzeigen, der Bogen markiert die Spanne.</p>
+      <h3 class="ueber">Ergebnisse</h3>
+      <div class="v2" id="v2"></div>
+    </section>
+
+    <section class="variante">
+      <h2><b>3</b>Größenvergleich</h2>
+      <p>Kreisflächen im echten Verhältnis, Sales Cycle als Jahresuhr.</p>
+      <h3 class="ueber">Ergebnisse</h3>
+      <div class="v3">
+        <svg viewBox="0 0 330 190" aria-label="Deal-Size und Projektgröße im Größenvergleich">
+          <circle class="blase blase--1" cx="95" cy="95" r="88" fill="var(--o-hell)"/>
+          <circle class="blase blase--2" cx="95" cy="149" r="34" fill="var(--o)"/>
+          <circle class="blase blase--3" cx="95" cy="176.8" r="6.2" fill="var(--dunkel)"/>
+          <g class="fade">
+            <line class="linie" x1="95" y1="7" x2="200" y2="7"/>
+            <text x="205" y="11"><tspan class="gross">200.000 €</tspan></text>
+            <text class="beschr" x="205" y="25">max. Projektgröße</text>
+            <line class="linie" x1="95" y1="115" x2="200" y2="115"/>
+            <text x="205" y="119"><tspan class="gross">30.000 €</tspan></text>
+            <text class="beschr" x="205" y="133">max. Deal-Size</text>
+            <line class="linie" x1="101" y1="176.8" x2="200" y2="176.8"/>
+            <text x="205" y="181"><tspan class="gross">1.000 €</tspan></text>
+            <text class="beschr" x="268" y="181">min. Deal</text>
+          </g>
+        </svg>
+        <div class="uhr">
+          <svg viewBox="0 0 80 80" id="uhr"></svg>
+          <div><span>Sales Cycle</span><strong>2–3 Monate</strong><span>von der ersten Ansprache bis zum Abschluss</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="variante v4">
+      <h2><b>4</b>Kästchen-Raster</h2>
+      <p>Zum Abzählen: ein Kästchen = 10.000 €, Sales Cycle in Monaten.</p>
+      <h3 class="ueber">Ergebnisse</h3>
+      <div class="zeile"><div class="zeile__kopf"><span>Deal-Size</span><strong>1.000 – 30.000 €</strong></div><div class="felder" data-n="20" data-m="0" data-f="3"></div></div>
+      <div class="zeile"><div class="zeile__kopf"><span>Projektgröße</span><strong>30.000 – 200.000 €</strong></div><div class="felder" data-n="20" data-m="3" data-f="20"></div></div>
+      <div class="zeile"><div class="zeile__kopf"><span>Sales Cycle</span><strong>2 – 3 Monate</strong></div><div class="felder felder--12" data-n="12" data-m="0" data-f="2" data-h="3"></div></div>
+      <div class="legende"><span><i style="background:var(--dunkel)"></i>Mindestwert</span><span><i style="background:var(--o)"></i>Spanne</span><span>1 Kästchen = 10.000 € bzw. 1 Monat</span></div>
+    </section>
+
+    <section class="variante">
+      <h2><b>5</b>Deal-Ticket</h2>
+      <p>Augenzwinkernd im Kassenbon-Look, passend zum Vertrieb.</p>
+      <h3 class="ueber">Ergebnisse</h3>
+      <div class="ticket">
+        <div class="ticket__kopf">EUROPEAN MEDIA PARTNER</div>
+        <div class="ticket__sub">Hamburg · 10/2017 – 10/2019</div>
+        <hr>
+        <div class="posten"><span>DEAL-SIZE</span><em></em><b><span class="zahl" data-ziel="1000">1.000</span> – <span class="zahl" data-ziel="30000">30.000</span> €</b></div>
+        <div class="posten"><span>PROJEKTGRÖSSE</span><em></em><b><span class="zahl" data-ziel="30000">30.000</span> – <span class="zahl" data-ziel="200000">200.000</span> €</b></div>
+        <div class="posten"><span>SALES CYCLE</span><em></em><b>2 – 3 MONATE</b></div>
+        <hr>
+        <div class="summe"><span>VERTRIEB</span><span>80 %</span></div>
+        <div class="stempel">ABGESCHLOSSEN</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const zahl = (v) => Number(v).toLocaleString("de-DE");
+
+// 2 · Tachos (Geld auf gemeinsamer Skala 0–250.000 €, Monate auf 0–12)
+const P = (f) => { const a = Math.PI * (1 - f); return [50 + 40 * Math.cos(a), 52 - 40 * Math.sin(a)]; };
+const bogen = (f1, f2) => { const [x1, y1] = P(f1), [x2, y2] = P(f2); return `M${x1.toFixed(2)},${y1.toFixed(2)} A40,40 0 0 1 ${x2.toFixed(2)},${y2.toFixed(2)}`; };
+const tachos = [
+  { label: "Deal-Size", von: 1000, bis: 30000, max: 250000, text: "1–30 T€", achse: "250 T€" },
+  { label: "Projektgröße", von: 30000, bis: 200000, max: 250000, text: "30–200 T€", achse: "250 T€" },
+  { label: "Sales Cycle", von: 2, bis: 3, max: 12, text: "2–3 Mon.", achse: "12 Mon." }
+];
+document.getElementById("v2").innerHTML = tachos.map((t) => `
+  <div class="tacho">
+    <svg viewBox="0 0 100 64">
+      <path class="grund" d="${bogen(0, 1)}"/>
+      <path class="wert" d="${bogen(Math.max(.005, t.von / t.max), t.bis / t.max)}" pathLength="100"/>
+      <text x="50" y="47" text-anchor="middle">${t.text}</text>
+      <text class="klein" x="10" y="63" text-anchor="middle">0</text>
+      <text class="klein" x="90" y="63" text-anchor="middle">${t.achse}</text>
+    </svg>
+    <span>${t.label}</span>
+  </div>`).join("");
+
+// 3 · Jahresuhr mit 12 Segmenten
+(function () {
+  const svg = document.getElementById("uhr"); let h = "";
+  for (let i = 0; i < 12; i++) {
+    const a1 = (i / 12) * 2 * Math.PI - Math.PI / 2 + .06, a2 = ((i + 1) / 12) * 2 * Math.PI - Math.PI / 2 - .06;
+    const p = (a) => `${(40 + 32 * Math.cos(a)).toFixed(2)},${(40 + 32 * Math.sin(a)).toFixed(2)}`;
+    h += `<path data-i="${i}" d="M${p(a1)} A32,32 0 0 1 ${p(a2)}"/>`;
+  }
+  svg.innerHTML = h + `<text x="40" y="45" text-anchor="middle" style="font-size:15px;font-weight:800;fill:var(--text)">2–3</text>`;
+})();
+
+// 4 · Kästchen
+document.querySelectorAll(".felder").forEach((f) => {
+  const n = +f.dataset.n, m = +f.dataset.m, voll = +f.dataset.f, halb = +(f.dataset.h || 0);
+  f.innerHTML = Array.from({ length: n }, (_, k) => `<i style="--k:${k}" class="${k < m ? "m" : k < voll ? "f" : k < halb ? "h" : ""}"></i>`).join("");
+});
+
+// Animation starten
+function start() {
+  const b = document.getElementById("buehne");
+  b.classList.remove("an");
+  document.querySelectorAll("#uhr path").forEach((p) => (p.style.stroke = ""));
+  document.querySelectorAll(".tacho .wert").forEach((p) => (p.style.strokeDasharray = "0 100"));
+  void b.offsetWidth;
+  requestAnimationFrame(() => {
+    b.classList.add("an");
+    // Tachos: Bogen zeichnen
+    document.querySelectorAll(".tacho .wert").forEach((p) => (p.style.strokeDasharray = "100 100"));
+    // Uhr: Segmente nacheinander füllen
+    document.querySelectorAll("#uhr path").forEach((p, i) => {
+      if (i < 3) setTimeout(() => (p.style.stroke = i < 2 ? "var(--o)" : "var(--o-hell)"), 600 + i * 220);
+    });
+    // Zahlen hochzählen
+    document.querySelectorAll(".zahl").forEach((el) => {
+      const ziel = +el.dataset.ziel, t0 = performance.now(), d = 1100;
+      (function tick(t) {
+        const f = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - f, 3);
+        el.textContent = zahl(Math.round(ziel * e));
+        if (f < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  });
+}
+document.getElementById("nochmal").addEventListener("click", start);
+start();
+</script>
+</body>
+</html>

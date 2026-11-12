@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lebenslauf – Prototypen</title>
+<style>
+  :root {
+    --petrol: #005f73; --text: #1c2430; --leise: #6b7480; --linie: #e8ebeb; --bg: #fefefe; --flaeche: #fff; --blase: #f2f3f3;
+    --marketing: #005f73; --video: #e9a23b; --technik: #7b6ccf;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text); background: var(--bg); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 20px 60px; }
+  h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; margin: 0 0 4px; }
+  .hinweis { color: var(--leise); margin: 0 0 22px; font-size: .9rem; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+  .tabs button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--linie); background: var(--flaeche); color: var(--leise); font: inherit; font-size: .9rem; cursor: pointer; }
+  .tabs button.aktiv { background: var(--petrol); border-color: var(--petrol); color: #fff; }
+  .tabs .neu { margin-left: auto; }
+  .legende { display: flex; gap: 16px; font-size: .82rem; color: var(--leise); margin-bottom: 14px; flex-wrap: wrap; }
+  .legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .buehne { border: 1px solid var(--linie); border-radius: 16px; background: var(--flaeche); padding: 22px; overflow: hidden; }
+  .variante[hidden] { display: none; }
+  .detail { margin-top: 16px; min-height: 110px; border-radius: 12px; background: var(--blase); padding: 14px 18px; transition: opacity .25s; }
+  .detail h3 { margin: 0 0 2px; font-size: 1rem; }
+  .detail .meta { color: var(--leise); font-size: .85rem; margin: 0 0 8px; }
+  .detail ul { margin: 0; padding-left: 18px; }
+  .detail .leer { color: var(--leise); margin: 0; }
+  svg { display: block; width: 100%; height: auto; font-family: inherit; }
+
+  /* 1 Schnitt-Timeline */
+  .tl { position: relative; }
+  .tl__lineal, .tl__spur { display: grid; grid-template-columns: 92px 1fr; align-items: center; }
+  .tl__skala { position: relative; height: 24px; border-bottom: 1px solid var(--linie); }
+  .tl__skala span { position: absolute; bottom: 4px; transform: translateX(-50%); font-size: .75rem; color: var(--leise); font-variant-numeric: tabular-nums; }
+  .tl__skala span::after { content: ""; position: absolute; left: 50%; top: 19px; height: 5px; border-left: 1px solid var(--linie); }
+  .tl__spur { height: 54px; border-bottom: 1px dashed var(--linie); }
+  .tl__name { font-size: .82rem; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+  .tl__name i { width: 8px; height: 8px; border-radius: 50%; }
+  .tl__bahn { position: relative; height: 100%; }
+  .clip {
+    position: absolute; top: 9px; bottom: 9px; border-radius: 7px; padding: 0 9px; border: 0; cursor: pointer;
+    color: #fff; font: inherit; font-size: .78rem; font-weight: 600; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transform-origin: left; transform: scaleX(0); opacity: 0; transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .2s, box-shadow .15s;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, transparent 1px 14px);
+  }
+  .clip.da { transform: scaleX(1); opacity: 1; }
+  .clip:hover, .clip.gewaehlt { box-shadow: 0 0 0 2px var(--text); }
+  .kopf { position: absolute; top: 0; bottom: 0; width: 2px; background: #e5484d; left: 92px; pointer-events: none; z-index: 2; }
+  .kopf::before { content: ""; position: absolute; top: 0; left: -6px; border: 7px solid transparent; border-top: 9px solid #e5484d; }
+
+  /* 2 Liniennetz */
+  .linie { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+  .halt { cursor: pointer; }
+  .halt circle { fill: #fff; stroke: var(--text); stroke-width: 3.5; transition: r .15s; }
+  .halt:hover circle, .halt.gewaehlt circle { stroke: var(--petrol); stroke-width: 5; }
+  .halt text { font-size: 13px; fill: var(--text); font-weight: 600; }
+  .halt .jahr { font-size: 11px; fill: var(--leise); font-weight: 400; }
+  .halt { opacity: 0; transition: opacity .3s; }
+  .halt.da { opacity: 1; }
+
+  /* 3 Skill-Strom */
+  .strom { cursor: crosshair; }
+  .achse text { font-size: 11px; fill: var(--leise); }
+  .marke circle { fill: #fff; stroke: var(--text); stroke-width: 2; }
+  .marke text { font-size: 11px; fill: var(--text); font-weight: 600; }
+  .cursor { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 3 3; }
+
+  @media (max-width: 640px) {
+    .tl__lineal, .tl__spur { grid-template-columns: 70px 1fr; }
+    .kopf { left: 70px; }
+    .buehne { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lebenslauf – drei Prototypen</h1>
+  <p class="hinweis">Beispieldaten. Elemente sind anklickbar.</p>
+
+  <div class="tabs">
+    <button data-tab="tl" class="aktiv">1 · Schnitt-Timeline</button>
+    <button data-tab="netz">2 · Liniennetzplan</button>
+    <button data-tab="strom">3 · Skill-Strom</button>
+    <button class="neu" id="nochmal">↻ Neu abspielen</button>
+  </div>
+  <div class="legende">
+    <span><i style="background:var(--marketing)"></i>Marketing</span>
+    <span><i style="background:var(--video)"></i>Video</span>
+    <span><i style="background:var(--technik)"></i>Technik</span>
+  </div>
+
+  <div class="buehne">
+    <section class="variante" id="v-tl"><div class="tl" id="tl"></div></section>
+    <section class="variante" id="v-netz" hidden><svg id="netz" viewBox="0 0 1000 380"></svg></section>
+    <section class="variante" id="v-strom" hidden><svg id="strom" class="strom" viewBox="0 0 1000 340"></svg></section>
+    <div class="detail" id="detail"><p class="leer">Etwas anklicken, um Details zu sehen.</p></div>
+  </div>
+</div>
+
+<script>
+// ---------- Beispieldaten ----------
+const VON = 2014, BIS = 2027;
+const SPUREN = [
+  { id: "marketing", name: "Marketing", farbe: "var(--marketing)" },
+  { id: "video", name: "Video", farbe: "var(--video)" },
+  { id: "technik", name: "Technik", farbe: "var(--technik)" }
+];
+// Clips = Tätigkeiten mit Zeitraum je Bereich
+const CLIPS = [
+  { spur: "marketing", von: 2014.6, bis: 2017.6, titel: "[Ausbildung / Studium]", ort: "[Schule / Hochschule]", punkte: ["[Schwerpunkt]"] },
+  { spur: "marketing", von: 2017.7, bis: 2021.2, titel: "[Position]", ort: "[Firma]", punkte: ["[Aufgabe / Erfolg]"] },
+  { spur: "video", von: 2018.5, bis: 2021.2, titel: "[Erste Videoprojekte]", ort: "[Firma]", punkte: ["[Projekt]"] },
+  { spur: "marketing", von: 2021.3, bis: 2026.9, titel: "Marketing MAIN-TOOL", ort: "GLI Business Solutions", punkte: ["B2B-Marketing für eine Instandhaltungssoftware auf Dynamics 365 Business Central", "One-Pager, Präsentationen, Kundenmaterialien"] },
+  { spur: "video", von: 2021.3, bis: 2026.9, titel: "Produkt- & Erklärvideos", ort: "GLI Business Solutions", punkte: ["Konzept, Dreh und Schnitt", "Marketing- und Produktvideos"] },
+  { spur: "technik", von: 2023.4, bis: 2026.9, titel: "KI-Sales-Berater", ort: "GLI Business Solutions", punkte: ["Web-Tool mit Next.js und HubSpot-Anbindung", "Unterstützt den Vertrieb bei der Gesprächsvorbereitung"] },
+  { spur: "technik", von: 2026.6, bis: 2026.9, titel: "Bewerbungsseite", ort: "Eigenprojekt", punkte: ["Diese Seite – selbst gebaut"] }
+];
+// Haltestellen für den Liniennetzplan
+const HALTE = [
+  { jahr: 2014, titel: "[Ausbildung]", ort: "[Schule / Hochschule]", linien: ["marketing"], punkte: ["[Schwerpunkt]"] },
+  { jahr: 2017, titel: "[Erste Station]", ort: "[Firma]", linien: ["marketing"], punkte: ["[Aufgabe]"] },
+  { jahr: 2018, titel: "[Erste Videos]", ort: "[Firma]", linien: ["video"], punkte: ["[Projekt]"] },
+  { jahr: 2021, titel: "GLI Business Solutions", ort: "Knotenpunkt", linien: ["marketing", "video", "technik"], punkte: ["Marketing für MAIN-TOOL", "Produkt- und Erklärvideos", "Vertriebsunterlagen"] },
+  { jahr: 2023, titel: "KI-Sales-Berater", ort: "GLI", linien: ["technik"], punkte: ["Next.js + HubSpot"] },
+  { jahr: 2024, titel: "[Video-Highlight]", ort: "GLI", linien: ["video"], punkte: ["[Projekt]"] },
+  { jahr: 2026, titel: "Heute", ort: "Bereit für den nächsten Schritt", linien: ["marketing", "video", "technik"], punkte: ["Marketing · Video · Technik in einer Person"] }
+];
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const farbe = (id) => SPUREN.find((s) => s.id === id).farbe;
+const jahrText = (v, b) => `${Math.floor(v)} – ${b >= 2026.8 ? "heute" : Math.floor(b)}`;
+const detail = document.getElementById("detail");
+function zeigeDetail(titel, meta, punkte) {
+  detail.style.opacity = 0;
+  setTimeout(() => {
+    detail.innerHTML = `<h3>${esc(titel)}</h3><p class="meta">${esc(meta)}</p><ul>${punkte.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`;
+    detail.style.opacity = 1;
+  }, 120);
+}
+function leereDetail() { detail.innerHTML = '<p class="leer">Etwas anklicken, um Details zu sehen.</p>'; }
+const timer = [];
+const spaeter = (fn, ms) => timer.push(setTimeout(fn, ms));
+const raeume = () => { timer.forEach(clearTimeout); timer.length = 0; };
+
+// ---------- 1 · Schnitt-Timeline ----------
+function baueTimeline() {
+  const el = document.getElementById("tl");
+  const pct = (j) => ((j - VON) / (BIS - VON)) * 100;
+  let jahre = "";
+  for (let j = VON; j <= BIS - 1; j++) jahre += `<span style="left:${pct(j + .5)}%">${j}</span>`;
+  el.innerHTML = `
+    <div class="tl__lineal"><span></span><div class="tl__skala">${jahre}</div></div>
+    ${SPUREN.map((s) => `
+      <div class="tl__spur">
+        <div class="tl__name"><i style="background:${s.farbe}"></i>${s.name}</div>
+        <div class="tl__bahn">${CLIPS.map((c, i) => c.spur !== s.id ? "" :
+          `<button class="clip" data-i="${i}" style="left:${pct(c.von)}%;width:${pct(c.bis) - pct(c.von)}%;background-color:${s.farbe}">${esc(c.titel)}</button>`).join("")}
+        </div>
+      </div>`).join("")}
+    <div class="kopf" id="kopf"></div>`;
+  el.querySelectorAll(".clip").forEach((b) => b.addEventListener("click", () => {
+    el.querySelectorAll(".clip").forEach((x) => x.classList.remove("gewaehlt"));
+    b.classList.add("gewaehlt");
+    const c = CLIPS[b.dataset.i];
+    zeigeDetail(c.titel, `${c.ort} · ${jahrText(c.von, c.bis)}`, c.punkte);
+  }));
+
+  // Abspielkopf fährt durch, Clips „rendern“ ein, wenn er sie erreicht
+  const kopf = document.getElementById("kopf");
+  const bahn = el.querySelector(".tl__bahn");
+  const start = bahn.offsetLeft, breite = bahn.offsetWidth, dauer = 3200;
+  const t0 = performance.now();
+  function schritt(t) {
+    const f = Math.min(1, (t - t0) / dauer);
+    const e = 1 - Math.pow(1 - f, 2);
+    kopf.style.left = start + e * breite + "px";
+    const jahr = VON + e * (BIS - VON);
+    el.querySelectorAll(".clip:not(.da)").forEach((b) => { if (CLIPS[b.dataset.i].von <= jahr) b.classList.add("da"); });
+    if (f < 1) laeuft = requestAnimationFrame(schritt);
+  }
+  laeuft = requestAnimationFrame(schritt);
+}
+let laeuft = 0;
+
+// ---------- 2 · Liniennetzplan ----------
+function baueNetz() {
+  const svg = document.getElementById("netz");
+  const W = 1000, links = 60, rechts = 940;
+  const x = (j) => links + ((j - VON) / (2026 - VON)) * (rechts - links);
+  const BAHN = { marketing: 120, video: 210, technik: 300 };
+  const MITTE = 210;
+  const yHalt = (h, linie) => BAHN[linie];
+
+  // Pfad je Linie: horizontal, dann 45°-Diagonale zur nächsten Höhe
+  function pfad(linie) {
+    const pts = [];
+    const halte = HALTE.filter((h) => h.linien.includes(linie));
+    pts.push([Math.max(x(VON) - 30, x(halte[0].jahr) - 30), BAHN[linie]]);
+    halte.forEach((h) => pts.push([x(h.jahr), yHalt(h, linie)]));
+    pts.push([x(2026) + 40, BAHN[linie]]);
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) {
+      const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
+      d += ` L${x2},${y2}`;
+    }
+    return d;
+  }
+
+  let html = "";
+  // Jahresraster
+  for (let j = VON; j <= 2026; j += 2) html += `<g class="achse"><line x1="${x(j)}" x2="${x(j)}" y1="40" y2="350" stroke="var(--linie)"/><text x="${x(j)}" y="368" text-anchor="middle">${j}</text></g>`;
+  SPUREN.forEach((s) => html += `<path class="linie" data-linie="${s.id}" d="${pfad(s.id)}" stroke="${s.farbe}"/>`);
+  HALTE.forEach((h, i) => {
+    const y = h.linien.length > 1 ? MITTE : BAHN[h.linien[0]];
+    const gross = h.linien.length > 1;
+    const oben = gross || h.linien[0] !== "technik";
+    html += `<g class="halt" data-i="${i}" transform="translate(${x(h.jahr)},${y})">
+      ${gross ? `<rect x="-11" y="-${BAHN.technik - MITTE + 11}" width="22" height="${(BAHN.technik - BAHN.marketing) + 22}" rx="11" fill="#fff" stroke="var(--text)" stroke-width="3.5"/>` : `<circle r="9"/>`}
+      <text x="0" y="${gross ? -(MITTE - BAHN.marketing) - 24 : oben ? -20 : 30}" text-anchor="middle">${esc(h.titel)}</text>
+      <text class="jahr" x="0" y="${gross ? -(MITTE - BAHN.marketing) - 38 : oben ? -34 : 44}" text-anchor="middle">${h.jahr}</text>
+    </g>`;
+  });
+  html += `<circle id="zug" r="7" fill="var(--text)" stroke="#fff" stroke-width="3" opacity="0"/>`;
+  svg.innerHTML = html;
+
+  // Linien zeichnen sich, Haltestellen erscheinen, Zug fährt die Technik-/Hauptlinie ab
+  svg.querySelectorAll(".linie").forEach((p, i) => {
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+    p.getBoundingClientRect();
+    p.style.transition = `stroke-dashoffset 2.4s cubic-bezier(.4,.1,.2,1) ${i * .25}s`;
+    p.style.strokeDashoffset = 0;
+  });
+  HALTE.forEach((h, i) => spaeter(() => svg.querySelector(`.halt[data-i="${i}"]`).classList.add("da"), 300 + ((h.jahr - VON) / (2026 - VON)) * 2200));
+  const zug = svg.getElementById("zug"), bahn = svg.querySelector('[data-linie="marketing"]'), L = bahn.getTotalLength();
+  spaeter(() => {
+    zug.setAttribute("opacity", 1);
+    const t0 = performance.now();
+    (function fahre(t) {
+      const f = Math.min(1, (t - t0) / 4200);
+      const pt = bahn.getPointAtLength(f * L);
+      zug.setAttribute("cx", pt.x); zug.setAttribute("cy", pt.y);
+      if (f < 1) laeuft = requestAnimationFrame(fahre);
+    })(t0);
+  }, 2600);
+
+  svg.querySelectorAll(".halt").forEach((g) => g.addEventListener("click", () => {
+    svg.querySelectorAll(".halt").forEach((x) => x.classList.remove("gewaehlt"));
+    g.classList.add("gewaehlt");
+    const h = HALTE[g.dataset.i];
+    zeigeDetail(h.titel, `${h.ort} · ${h.jahr} · Linien: ${h.linien.map((l) => SPUREN.find((s) => s.id === l).name).join(", ")}`, h.punkte);
+  }));
+}
+
+// ---------- 3 · Skill-Strom ----------
+function baueStrom() {
+  const svg = document.getElementById("strom");
+  const links = 40, rechts = 960, mitte = 150, skala = 62;
+  const jahre = []; for (let j = VON + .5; j <= 2026.5; j += .25) jahre.push(j);
+  const x = (j) => links + ((j - (VON + .5)) / (2026.5 - (VON + .5))) * (rechts - links);
+  // Anteil je Bereich = Summe der aktiven Clips (weich geglättet)
+  const wert = (spur, j) => CLIPS.filter((c) => c.spur === spur).reduce((n, c) => n + 1 / (1 + Math.exp(-(j - c.von) * 3)) * (1 / (1 + Math.exp((j - c.bis) * 3))), 0) + .08;
+  const daten = jahre.map((j) => SPUREN.map((s) => wert(s.id, j) * (s.id === "technik" ? 1.2 : 1)));
+  // Streamgraph: symmetrisch um die Mitte gestapelt
+  const lagen = SPUREN.map(() => []);
+  daten.forEach((werte, k) => {
+    const summe = werte.reduce((a, b) => a + b, 0);
+    let unten = mitte + (summe * skala) / 2;
+    werte.forEach((w, i) => { const oben = unten - w * skala; lagen[i].push([x(jahre[k]), oben, unten]); unten = oben; });
+  });
+  const kurve = (pts) => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+  const flaeche = (lage) => kurve(lage.map((p) => [p[0], p[1]])) + " " + kurve(lage.slice().reverse().map((p) => [p[0], p[2]])).replace("M", "L") + " Z";
+
+  let html = `<defs><clipPath id="enthuellen"><rect id="vorhang" x="0" y="0" width="0" height="340"/></clipPath></defs><g clip-path="url(#enthuellen)">`;
+  lagen.forEach((lage, i) => html += `<path d="${flaeche(lage)}" fill="${SPUREN[i].farbe}" opacity=".92"/>`);
+  html += `</g>`;
+  for (let j = VON + 1; j <= 2026; j += 2) html += `<g class="achse"><text x="${x(j + .5)}" y="330" text-anchor="middle">${j}</text></g>`;
+  // Stationen als Marken auf der Zeitachse
+  const marken = [{ j: 2015, t: "[Ausbildung]", i: 0 }, { j: 2018, t: "[Firma]", i: 1 }, { j: 2021.5, t: "GLI", i: 3 }, { j: 2023.6, t: "Sales-Tool", i: 5 }];
+  marken.forEach((m) => html += `<g class="marke"><line x1="${x(m.j)}" x2="${x(m.j)}" y1="285" y2="300" stroke="var(--text)"/><circle cx="${x(m.j)}" cy="300" r="4"/><text x="${x(m.j)}" y="282" text-anchor="middle">${esc(m.t)}</text></g>`);
+  html += `<line class="cursor" id="cursor" x1="0" x2="0" y1="20" y2="300" opacity="0"/>`;
+  svg.innerHTML = html;
+
+  const vorhang = svg.getElementById("vorhang"), t0 = performance.now();
+  (function fliesse(t) {
+    const f = Math.min(1, (t - t0) / 2600);
+    vorhang.setAttribute("width", (1 - Math.pow(1 - f, 3)) * 1000);
+    if (f < 1) laeuft = requestAnimationFrame(fliesse);
+  })(t0);
+
+  // Klick auf ein Jahr: Was war da los?
+  const cursor = svg.getElementById("cursor");
+  svg.onclick = (e) => {
+    const r = svg.getBoundingClientRect();
+    const sx = ((e.clientX - r.left) / r.width) * 1000;
+    const j = VON + .5 + ((sx - links) / (rechts - links)) * (2026.5 - (VON + .5));
+    if (j < VON || j > 2027) return;
+    cursor.setAttribute("x1", sx); cursor.setAttribute("x2", sx); cursor.setAttribute("opacity", 1);
+    const aktiv = CLIPS.filter((c) => c.von <= j && c.bis >= j);
+    const jahr = Math.floor(j);
+    zeigeDetail(`${jahr}`, aktiv.length ? `${aktiv.length} Tätigkeit${aktiv.length > 1 ? "en" : ""} parallel` : "Keine Einträge",
+      aktiv.map((c) => `${SPUREN.find((s) => s.id === c.spur).name}: ${c.titel} (${c.ort})`));
+  };
+}
+
+// ---------- Steuerung ----------
+const bauer = { tl: baueTimeline, netz: baueNetz, strom: baueStrom };
+let aktuell = "tl";
+function starte(tab) {
+  raeume(); cancelAnimationFrame(laeuft); leereDetail();
+  aktuell = tab;
+  document.querySelectorAll(".tabs [data-tab]").forEach((b) => b.classList.toggle("aktiv", b.dataset.tab === tab));
+  document.querySelectorAll(".variante").forEach((v) => v.hidden = v.id !== "v-" + tab);
+  bauer[tab]();
+}
+document.querySelectorAll(".tabs [data-tab]").forEach((b) => b.addEventListener("click", () => starte(b.dataset.tab)));
+document.getElementById("nochmal").addEventListener("click", () => starte(aktuell));
+const start = new URLSearchParams(location.search).get("v");
+starte(bauer[start] ? start : "tl");
+</script>
+</body>
+</html>

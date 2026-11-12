@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Bewerbung</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap">
+  <link rel="stylesheet" href="../../assets/style.css">
+  <!-- Firmenschrift (optional), z. B. von Google Fonts: -->
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap"> -->
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // Alles Firmenspezifische steht hier.
+    window.FIRMA = {
+      name: "Musterfirma GmbH", // wird überall auf der Seite eingesetzt
+      artikel: "die",      // Artikel in „Warum Marcel und die … ?“ – leer = ohne Artikel
+      // frage: "Warum Marcel für diese Rolle?", // optional: ersetzt „Warum Marcel und … ?“ (z. B. bei Personalvermittlern)
+      ansprechpartner: "", // z. B. "Anna"
+      logo: "logo.png",    // z. B. "logo.png" – Datei in diesen Ordner legen; erscheint unten links und im Anschreiben
+      betreff: "Bewerbung als [Position]",
+      anrede: "Hallo [Vorname],",
+      anschreiben: [
+        "[Warum genau die Musterfirma GmbH? Was reizt dich an der Stelle?]",
+        "[Was bringst du konkret mit, das für sie relevant ist?]",
+        "[Abschluss: Verfügbarkeit, Gehaltsvorstellung falls gefragt, Gesprächswunsch.]"
+      ],
+      gruss: "Ich freue mich darauf, von dir zu hören.",
+      // Antwort auf „Warum Marcel und die Musterfirma GmbH?“ – erscheint als erste Frage im Chat
+      // warumSchluss: "…", // optional: letzter Absatz im Reiter „Warum diese Bewerbung?“ (Standard: „… auf die Musterfirma GmbH zugeschnitten …“)
+      warumWir: [
+        "[Was verbindet dich mit der Musterfirma GmbH? Was reizt dich an der Stelle?]",
+        "[Welche Erfahrung bringst du konkret für diese Aufgabe mit?]"
+      ]
+    };
+  </script>
+  <script src="../../assets/content.js"></script>
+  <script src="../../assets/render.js"></script>
+</body>
+</html>
