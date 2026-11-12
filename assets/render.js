@@ -15,6 +15,10 @@
       if (a) a.text = text;
     });
   }
+  // Eigene Lebenslauf-Dateien pro Firma (Pfade relativ zur Firmenseite)
+  if (F && F.downloads && B.downloads) {
+    B.downloads.dateien = F.downloads.map((d) => ({ ...d, roh: true }));
+  }
   if (F && F.fragen) {
     B.chat.vorschlaege = B.chat.vorschlaege.map((f) => F.fragen[f] || f);
   }
@@ -189,7 +193,7 @@
         ${B.downloads ? `
           <div class="download">
             <span>${esc(B.downloads.text)}</span>
-            <span class="download__knoepfe">${B.downloads.dateien.map((d) => `<a class="download__knopf" href="${esc(pfad(d.datei))}" download>${ico("download")}${esc(d.label)}</a>`).join("")}</span>
+            <span class="download__knoepfe">${B.downloads.dateien.map((d) => `<a class="download__knopf" href="${esc(d.roh ? d.datei : pfad(d.datei))}" download>${ico("download")}${esc(d.label)}</a>`).join("")}</span>
           </div>` : ""}
       </div>
       <div class="cv">
